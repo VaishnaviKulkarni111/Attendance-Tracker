@@ -9,7 +9,7 @@ const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi782
 // Register route
 router.post("/register", async (req, res) => {
     console.log("Register route hit");
-  const { fname, lname, email, password, userType } = req.body;
+  const { fname, email, password, userType } = req.body;
 
   const encryptedPassword = await bcrypt.hash(password, 10);
   try {
@@ -21,7 +21,6 @@ router.post("/register", async (req, res) => {
 
     const user = await User.create({
       fname,
-      lname,
       email,
       password: encryptedPassword,
       userType,
