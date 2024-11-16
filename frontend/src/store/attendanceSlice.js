@@ -11,7 +11,7 @@ const initialState = {
 // Async action for check-in
 export const checkIn = createAsyncThunk('attendance/checkIn', async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch('http://localhost:5000/attendance/checkin', {
+    const response = await fetch('http://localhost:5000/api/attendance/checkin', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -31,7 +31,7 @@ export const checkIn = createAsyncThunk('attendance/checkIn', async (_, { reject
 // Async action for check-out
 export const checkOut = createAsyncThunk('attendance/checkOut', async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch('http://localhost:5000/attendance/checkout', {
+    const response = await fetch('http://localhost:5000/api/attendance/checkout', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,

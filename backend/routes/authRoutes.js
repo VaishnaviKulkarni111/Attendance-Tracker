@@ -8,7 +8,6 @@ const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi782
 
 // Register route
 router.post("/register", async (req, res) => {
-    console.log("Register route hit");
   const { fname, email, password, userType } = req.body;
 
   const encryptedPassword = await bcrypt.hash(password, 10);
@@ -58,8 +57,6 @@ router.post("/login-user", async (req, res) => {
     const encryptedPassword = await bcrypt.hash(password, 10);
 
     const isPasswordValid = await bcrypt.compare(password, encryptedPassword);
-    console.log("Password valid?", isPasswordValid);
-
       
         if (!isPasswordValid) {
       return res.status(400).json({ status: "error", error: "Invalid credentials" });

@@ -20,6 +20,11 @@ const Sidebar = () => {
 
   const tabs = userType === 'manager' ? managerTabs : employeeTabs;
 
+  const handleLogout = () => {
+    window.localStorage.clear();
+    window.location.href = '/home'; 
+  };
+
   return (
     <div className="min-h-screen w-64 bg-gradient-to-br from-indigo-600 to-teal-500 text-white fixed">
       <h1 className="text-3xl font-bold py-6 px-6">ServiPhi Technologies</h1>
@@ -34,6 +39,14 @@ const Sidebar = () => {
           </Link>
         ))}
       </nav>
+      <div className="px-4 pb-6">
+        <button
+          onClick={handleLogout}
+          className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-md shadow-lg transition duration-150"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 };
