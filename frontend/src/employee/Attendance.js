@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkIn, checkOut } from '../store/attendanceSlice'; // Import actions
+import { checkIn, checkOut } from '../store/attendanceSlice'; // Import check-in/out actions
 
 const Attendance = () => {
   const dispatch = useDispatch();
   const { checkInStatus, checkOutStatus, checkInTime, checkOutTime } = useSelector((state) => state.attendance);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+
+  const [isSuccessMessageVisible, setIsSuccessMessageVisible] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Handle check-in action
   const handleCheckIn = () => {
     dispatch(checkIn())
       .then((response) => {
-        setModalMessage(`Check-in successful at ${response.payload.checkInTime}`);
-        setIsModalOpen(true);
+        setSuccessMessage(`Check-in successful at ${response.payload.checkInTime}`);
+        setIsSuccessMessageVisible(true);
       })
       .catch((error) => {
-        setModalMessage(error.message || 'Check-in failed');
-        setIsModalOpen(true);
+        setSuccessMessage(error.message || 'Check-in failed');
+        setIsSuccessMessageVisible(true);
       });
   };
 
@@ -25,51 +26,57 @@ const Attendance = () => {
   const handleCheckOut = () => {
     dispatch(checkOut())
       .then((response) => {
-        setModalMessage(`Check-out successful at ${response.payload.checkOutTime}`);
-        setIsModalOpen(true);
+        setSuccessMessage(`Check-out successful at ${response.payload.checkOutTime}`);
+        setIsSuccessMessageVisible(true);
       })
       .catch((error) => {
-        setModalMessage(error.message || 'Check-out failed');
-        setIsModalOpen(true);
+        setSuccessMessage(error.message || 'Check-out failed');
+        setIsSuccessMessageVisible(true);
       });
   };
 
   return (
-    <div className="flex flex-col items-center justify-start p-6">
-
-      {/* Buttons will be on the right side of the page */}
-      <div className="flex justify-end w-full space-x-4">
-        <button
-          className="btn btn-primary"
-          onClick={handleCheckIn}
-          disabled={checkInStatus === 'completed'}
-        >
-          Check-in
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={handleCheckOut}
-          disabled={checkOutStatus === 'completed' || checkInStatus !== 'completed'}
-        >
-          Check-out
-        </button>
+    <div className="flex h-screen">
+      {/* Left Sidebar Placeholder */}
+      <div className="w-64 bg-gradient-to-br from-indigo-600 to-teal-500 text-white">
+        {/* Sidebar content here */}
       </div>
 
-      {/* Modal for Success Message */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-opacity-50 bg-gray-700 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-semibold">Success</h3>
-            <p>{modalMessage}</p>
+      {/* Right Content Area */}
+      <div className="flex-grow p-6">
+        <div className="flex justify-end space-x-4">
+          {/* Check-in Button */}
+          <button
+            onClick={handleCheckIn}
+            disabled={checkInStatus === 'completed'}
+            className="btn btn-primary"
+          >
+            Check-in
+          </button>
+
+          {/* Check-out Button */}
+          <button
+            onClick={handleCheckOut}
+            disabled={checkOutStatus === 'completed' || checkInStatus !== 'completed'}
+            className="btn btn-secondary"
+          >
+            Check-out
+          </button>
+        </div>
+
+        {/* Success Message */}
+        {isSuccessMessageVisible && (
+          <div className="mt-6 bg-green-100 text-green-800 p-4 rounded-md shadow-md">
+            <p>{successMessage}</p>
             <button
-              onClick={() => setIsModalOpen(false)}
-              className="btn btn-primary mt-4"
+              onClick={() => setIsSuccessMessageVisible(false)}
+              className="btn btn-sm btn-success mt-2"
             >
               Close
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

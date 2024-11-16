@@ -1,7 +1,6 @@
-// src/UI/Sidebar.js
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const Sidebar = () => {
   const userType = useSelector((state) => state.auth.userType);
@@ -22,7 +21,7 @@ const Sidebar = () => {
   const tabs = userType === 'manager' ? managerTabs : employeeTabs;
 
   return (
-    <div className="min-h-screen w-64 bg-gradient-to-br from-indigo-600 to-teal-500 text-white flex flex-col">
+    <div className="min-h-screen w-64 bg-gradient-to-br from-indigo-600 to-teal-500 text-white fixed">
       <h1 className="text-3xl font-bold py-6 px-6">ServiPhi Technologies</h1>
       <nav className="flex-1 px-4">
         {tabs.map((tab) => (
