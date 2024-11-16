@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const Sidebar = () => {
-  const userType = useSelector((state) => state.auth.userType);
+  const userType = localStorage.getItem("userType")
 
   const employeeTabs = [
     { name: 'Dashboard', path: '/dashboard' },
@@ -12,9 +12,9 @@ const Sidebar = () => {
   ];
 
   const managerTabs = [
-    { name: 'Dashboard', path: '/manager/dashboard' },
+    { name: 'Dashboard', path: '/mdashboard' },
     { name: 'Employee Management', path: '/manager/employees' },
-    { name: 'Reports', path: '/manager/reports' },
+    { name: 'Reports', path: '/show-attendance' },
     { name: 'Profile', path: '/manager/profile' },
   ];
 

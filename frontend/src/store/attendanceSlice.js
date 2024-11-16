@@ -36,7 +36,7 @@ export const checkOut = createAsyncThunk('attendance/checkOut', async (_, { reje
   try {
     const token = localStorage.getItem('token');  
 
-    const response = await fetch('http://localhost:5000//attendance/checkout', {
+    const response = await fetch('http://localhost:5000/attendance/checkout', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -52,6 +52,25 @@ export const checkOut = createAsyncThunk('attendance/checkOut', async (_, { reje
     return rejectWithValue(error.message);
   }
 });
+
+//for manager
+export const fetchAttendance = createAsyncThunk(
+  'attendance/fetchAttendance',
+  async (employeeId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:5000/attendance/manager/${employeeId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      const data = await response.json();
+      console.log(data)
+      if (response.ok) return data;
+      return rejectWithValue(data.message);
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 
 // Attendance slice
 const attendanceSlice = createSlice({
@@ -81,7 +100,20 @@ const attendanceSlice = createSlice({
       .addCase(checkOut.rejected, (state, action) => {
         state.checkOutStatus = 'idle';
         state.error = action.payload;
+      })
+      .addCase(fetchAttendance.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAttendance.fulfilled, (state, action) => {
+        state.loading = false;
+        state.attendanceHistory = action.payload;
+      })
+      .addCase(fetchAttendance.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
+      
   },
 });
 

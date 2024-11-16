@@ -23,7 +23,7 @@ function Homepage() {
       if (userType === 'employee') {
         navigate('/employee/dashboard');
       } else if (userType === 'manager') {
-        navigate('/manager/dashboard');
+        navigate('/mdashboard');
       }
     }
   }, [token, userType, navigate]);

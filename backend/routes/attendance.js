@@ -8,12 +8,11 @@ const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi782
 // Helper function for JWT verification
 const verifyToken = (req) => {
   const token = req.headers.authorization?.split(' ')[1];
-  console.log("backend token", token)
   if (!token) return null;
 
   try {
     const decoded =  jwt.verify(token, JWT_SECRET);
-    console.log("decoded", decoded)
+    console.log("decoded in verifytoken", decoded)
     return decoded
   } catch (error) {
     return null;
@@ -26,9 +25,6 @@ router.post('/checkin', async (req, res) => {
   if (!decoded) return res.status(401).json({ message: 'Unauthorized' });
 
   const employeeId = decoded.id; 
-  console.log("Decoded ID:", decoded.id);  // Log the decoded ID to ensure it's available
-
-  console.log("employee id", employeeId)
   try {
     const today = new Date().setHours(0, 0, 0, 0);  // Reset to midnight to compare dates
     let attendance = await Attendance.findOne({ employeeId, date: today });
@@ -82,6 +78,25 @@ router.post('/checkout', async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+router.get('/manager/:employeeId', async (req, res) => {
+  const decoded = verifyToken(req);
+  console.log("decoded in manager route",decoded)
+  if (!decoded || decoded.userType !== 'manager') {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  const { employeeId } = req.params;
+  console.log("employee ID searched by manager",employeeId)
+  try {
+    const attendanceData = await Attendance.find({ employeeId }).sort({ date: -1 });
+    res.json(attendanceData);
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 
 module.exports = router;
