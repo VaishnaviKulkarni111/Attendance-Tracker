@@ -4,7 +4,7 @@ import { checkIn, checkOut } from '../store/attendanceSlice'; // Import check-in
 
 const Attendance = () => {
   const dispatch = useDispatch();
-  const { checkInStatus, checkOutStatus, checkInTime, checkOutTime } = useSelector((state) => state.attendance);
+  const { checkInStatus, checkOutStatus, checkInTime, checkOutTime, error } = useSelector((state) => state.attendance);
 
   const [isSuccessMessageVisible, setIsSuccessMessageVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -13,10 +13,12 @@ const Attendance = () => {
   const handleCheckIn = () => {
     dispatch(checkIn())
       .then((response) => {
+        console.log("response", response)
         setSuccessMessage(`Check-in successful at ${response.payload.checkInTime}`);
         setIsSuccessMessageVisible(true);
       })
       .catch((error) => {
+        // Ensure error is a string before setting
         setSuccessMessage(error.message || 'Check-in failed');
         setIsSuccessMessageVisible(true);
       });
@@ -30,6 +32,7 @@ const Attendance = () => {
         setIsSuccessMessageVisible(true);
       })
       .catch((error) => {
+        // Ensure error is a string before setting
         setSuccessMessage(error.message || 'Check-out failed');
         setIsSuccessMessageVisible(true);
       });
@@ -64,7 +67,7 @@ const Attendance = () => {
           </button>
         </div>
 
-        {/* Success Message */}
+        {/* Success/Error Message */}
         {isSuccessMessageVisible && (
           <div className="mt-6 bg-green-100 text-green-800 p-4 rounded-md shadow-md">
             <p>{successMessage}</p>
@@ -74,6 +77,13 @@ const Attendance = () => {
             >
               Close
             </button>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="mt-6 bg-red-100 text-red-800 p-4 rounded-md shadow-md">
+            <p>{error}</p> {/* Ensure error is a string */}
           </div>
         )}
       </div>

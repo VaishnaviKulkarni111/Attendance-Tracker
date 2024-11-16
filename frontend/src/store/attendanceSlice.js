@@ -11,14 +11,17 @@ const initialState = {
 // Async action for check-in
 export const checkIn = createAsyncThunk('attendance/checkIn', async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch('http://localhost:5000/api/attendance/checkin', {
+    const token = localStorage.getItem('token');  
+    console.log("token",token)
+    const response = await fetch('http://localhost:5000/attendance/checkin', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`, 
       },
     });
     const data = await response.json();
     if (response.ok) {
+      console.log("res", data)
       return data;
     } else {
       return rejectWithValue(data.message);
@@ -31,10 +34,12 @@ export const checkIn = createAsyncThunk('attendance/checkIn', async (_, { reject
 // Async action for check-out
 export const checkOut = createAsyncThunk('attendance/checkOut', async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch('http://localhost:5000/api/attendance/checkout', {
+    const token = localStorage.getItem('token');  
+
+    const response = await fetch('http://localhost:5000//attendance/checkout', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const data = await response.json();

@@ -14,9 +14,12 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem('token');  
+
       const response = await fetch('http://localhost:5000/login-user', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
@@ -47,9 +50,12 @@ export const registerUser = createAsyncThunk(
   'auth/registerUser',
   async ({ fname, email, password, userType }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem('token');  
+
       const response = await fetch('http://localhost:5000/register', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
