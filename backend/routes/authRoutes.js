@@ -78,6 +78,15 @@ router.post("/login-user", async (req, res) => {
   }
 });
 
+router.get("/getAllUser", async (req, res) => {
+    try {
+      const allUser = await User.find({});
+      res.send({ status: "ok", data: allUser });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
 
 // Retrieve user data
 router.post("/userData", async (req, res) => {

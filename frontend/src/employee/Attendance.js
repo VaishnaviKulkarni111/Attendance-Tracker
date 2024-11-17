@@ -4,7 +4,7 @@ import { checkIn, checkOut } from '../store/attendanceSlice'; // Import check-in
 
 const Attendance = () => {
   const dispatch = useDispatch();
-  const { checkInStatus, checkOutStatus, checkInTime, checkOutTime, error } = useSelector((state) => state.attendance);
+  const { checkInStatus, checkOutStatus, error } = useSelector((state) => state.attendance);
 
   const [isSuccessMessageVisible, setIsSuccessMessageVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');

@@ -81,6 +81,33 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+// Async thunk to fetch all users
+export const fetchUsers = createAsyncThunk(
+  'user/fetchUsers',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await fetch("http://localhost:5000/getAllUser", {
+        method: "GET", 
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`, // Only include if required
+        },
+      });
+      const data = await response.json();
+
+      if (data.error) {
+        return rejectWithValue(data.error);
+      }
+
+      return data; // Directly return the data object
+    } catch (error) {
+      console.error("Error fetching users:", error); // Debugging line
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 
 
 // Auth slice
@@ -126,6 +153,19 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchUsers.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        console.log("Fetched all users:", action.payload); // Debugging
+        state.status = 'succeeded';
+        state.user = action.payload.data; // Store the fetched users
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
+        console.log("Fetch users rejected:", action.payload); // Debugging
+        state.status = 'failed';
         state.error = action.payload;
       });
   },

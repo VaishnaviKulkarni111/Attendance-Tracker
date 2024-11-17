@@ -1,23 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchAttendance } from '../store/attendanceSlice'; // Adjust path if necessary
+import { fetchAttendance } from '../store/attendanceSlice'; 
+import { fetchUsers } from '../store/authSlice';
 import { FaSearch } from 'react-icons/fa';
 
 const ShowAttendance = () => {
   const dispatch = useDispatch();
   const { attendanceHistory = [], loading, error } = useSelector((state) => state.attendance);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filteredAttendance, setFilteredAttendance] = useState([]);
 
-  // Fetch data on component mount
+  const users = useSelector((state) => state.auth.user) || [];
+  console.log("users", users)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      dispatch(fetchUsers(token));
+    }
+  }, [dispatch]);
+  
   useEffect(() => {
     dispatch(fetchAttendance()); // Fetch all attendance records initially
   }, [dispatch]);
 
-  // Handle search functionality
-  const handleSearch = () => {
-    if (searchTerm.trim()) {
-      dispatch(fetchAttendance(searchTerm.trim())); // Fetch data for specific employee
-    }
+  const handleSearchChange = (e) => {
+    const input = e.target.value;
+    setSearchTerm(input);
+
+    // Filter attendance records based on the search term
+    const filtered = attendanceHistory.filter((record) =>
+      record.employeeId.toLowerCase().includes(input.toLowerCase())
+    );
+    setFilteredAttendance(filtered);
   };
 
   return (
@@ -28,14 +43,11 @@ const ShowAttendance = () => {
           <input
             type="text"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             placeholder="Search by Employee ID"
             className="border border-gray-300 rounded-l-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button
-            onClick={handleSearch}
-            className="bg-blue-500 text-white px-4 rounded-r-md flex items-center justify-center hover:bg-blue-600"
-          >
+          <button className="bg-blue-500 text-white px-4 rounded-r-md flex items-center justify-center hover:bg-blue-600">
             <FaSearch />
           </button>
         </div>
@@ -45,7 +57,7 @@ const ShowAttendance = () => {
         <p className="text-gray-500">Loading...</p>
       ) : error ? (
         <p className="text-red-500">Error: {error}</p>
-      ) : attendanceHistory.length === 0 ? (
+      ) : (searchTerm && filteredAttendance.length === 0) || (!searchTerm && attendanceHistory.length === 0) ? (
         <p className="text-gray-500">No records found.</p>
       ) : (
         <div className="overflow-auto shadow-md rounded-lg">
@@ -59,8 +71,8 @@ const ShowAttendance = () => {
               </tr>
             </thead>
             <tbody>
-              {attendanceHistory.map((record) => (
-                <tr key={record.date} className="hover:bg-gray-50">
+              {(searchTerm ? filteredAttendance : attendanceHistory).map((record) => (
+                <tr key={record._id} className="hover:bg-gray-50">
                   <td className="border border-gray-300 px-4 py-2">
                     {new Date(record.date).toLocaleDateString()}
                   </td>
