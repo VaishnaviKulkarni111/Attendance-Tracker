@@ -7,49 +7,59 @@ import { FaSearch } from 'react-icons/fa';
 const ShowAttendance = () => {
   const dispatch = useDispatch();
   const { attendanceHistory = [], loading, error } = useSelector((state) => state.attendance);
-  const { users = [] } = useSelector((state) => state.auth);
-
+  const users = useSelector((state) => state.auth.user) || []; // Correctly access users
+ console.log("users from selector",users)
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState('');
 
   // Fetch all users and attendance initially
   useEffect(() => {
-    dispatch(fetchUsers());  // Fetch users
+    dispatch(fetchUsers())  // Fetch users
+      .unwrap()
+      .then((response) => {
+        console.log("Fetched Users Response: ", response);
+        console.log("Fetched Users Data: ", response.data);
+      })
+      .catch((error) => {
+        console.log("Error fetching users: ", error);
+      });
     dispatch(fetchAttendance());  // Fetch attendance
   }, [dispatch]);
 
-  // Filter users based on search input
+  useEffect(() => {
+    console.log("Users from State: ", users);
+  }, [users]);
+
   const handleSearchInput = (e) => {
     const input = e.target.value;
     setSearchTerm(input);
-
-    if (input.trim() && Array.isArray(users)) {  // Ensure users is an array before filtering
-      const matchingUsers = users.filter(
-        (user) =>
-          user.fname.toLowerCase().includes(input.toLowerCase()) ||
-          user.lname.toLowerCase().includes(input.toLowerCase()) ||
-          user.email.toLowerCase().includes(input.toLowerCase())
-      );
-
-      setFilteredUsers(matchingUsers);
-    } else {
-      setFilteredUsers([]);
-    }
+    console.log("Search Term: ", input);
+  
+    const userArray = Array.isArray(users.data) ? users.data : Array.isArray(users) ? users : [];
+    console.log("array",userArray)
+    const matching = userArray.filter((user) =>
+      user.fname.toLowerCase().includes(input.toLowerCase()) ||
+      user.email.toLowerCase().includes(input.toLowerCase())
+    );
+  
+    setFilteredUsers(matching); // Update the state with the filtered users
+    console.log("Matching Users: ", matching); // Log the filtered array
   };
+  
 
-  // Handle user selection from the filtered list
-  const handleUserSelection = (userId) => {
-    setSelectedUserId(userId);
-    setSearchTerm('');
+  const handleUserSelection = (user) => {
+    setSelectedUserId(user._id);
+    setSearchTerm(`${user.fname} (${user.email})`);
     setFilteredUsers([]);
+    console.log("Selected User ID: ", user._id);
   };
 
-  // Fetch attendance for selected user or entered ID
   const handleSearch = () => {
     const idToSearch = selectedUserId || searchTerm.trim();
     if (idToSearch) {
       dispatch(fetchAttendance(idToSearch));
+      console.log("Searched User ID: ", idToSearch);
     }
   };
 
@@ -71,9 +81,9 @@ const ShowAttendance = () => {
                 <li
                   key={user._id}
                   className="p-2 cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleUserSelection(user._id)}
+                  onClick={() => handleUserSelection(user)}
                 >
-                  {user.fname} {user.lname} ({user.email})
+                  {user.fname} ({user.email})
                 </li>
               ))}
             </ul>

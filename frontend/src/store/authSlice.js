@@ -5,7 +5,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 const initialState = {
   token: null,
   userType: null,
-  user: null,
+  user: [],
   loading: false,
   error: null,
 };
@@ -116,7 +116,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.user = null;
+      state.user = [];
       state.token = null;
       state.userType = null; // Clear userType on logout
       window.localStorage.clear();
@@ -161,7 +161,9 @@ const authSlice = createSlice({
       .addCase(fetchUsers.fulfilled, (state, action) => {
         console.log("Fetched all users:", action.payload); // Debugging
         state.status = 'succeeded';
-        state.user = action.payload.data; // Store the fetched users
+        state.user = action.payload.data; 
+        console.log("Reducer: Users stored in state:", action.payload);
+
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         console.log("Fetch users rejected:", action.payload); // Debugging

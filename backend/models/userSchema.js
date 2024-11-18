@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     userType: { type: String, default: "User" },
   },
   {
-    collection: "Users-AT",
+    collection: "Users-AT", 
   }
 );
 
