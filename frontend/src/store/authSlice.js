@@ -159,11 +159,8 @@ const authSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        console.log("Fetched all users:", action.payload); // Debugging
         state.status = 'succeeded';
         state.user = action.payload.data; 
-        console.log("Reducer: Users stored in state:", action.payload);
-
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         console.log("Fetch users rejected:", action.payload); // Debugging

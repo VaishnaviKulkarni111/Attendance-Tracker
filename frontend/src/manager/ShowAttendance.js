@@ -8,43 +8,38 @@ const ShowAttendance = () => {
   const dispatch = useDispatch();
   const { attendanceHistory = [], loading, error } = useSelector((state) => state.attendance);
   const users = useSelector((state) => state.auth.user) || []; // Correctly access users
- console.log("users from selector",users)
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState('');
 
   // Fetch all users and attendance initially
   useEffect(() => {
-    dispatch(fetchUsers())  // Fetch users
+    dispatch(fetchUsers())  
       .unwrap()
       .then((response) => {
-        console.log("Fetched Users Response: ", response);
         console.log("Fetched Users Data: ", response.data);
       })
       .catch((error) => {
         console.log("Error fetching users: ", error);
       });
-    dispatch(fetchAttendance());  // Fetch attendance
+      if(selectedUserId){
+        dispatch(fetchAttendance())
+      };  // Fetch attendance
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log("Users from State: ", users);
-  }, [users]);
+
 
   const handleSearchInput = (e) => {
     const input = e.target.value;
     setSearchTerm(input);
-    console.log("Search Term: ", input);
   
     const userArray = Array.isArray(users.data) ? users.data : Array.isArray(users) ? users : [];
-    console.log("array",userArray)
     const matching = userArray.filter((user) =>
       user.fname.toLowerCase().includes(input.toLowerCase()) ||
       user.email.toLowerCase().includes(input.toLowerCase())
     );
   
     setFilteredUsers(matching); // Update the state with the filtered users
-    console.log("Matching Users: ", matching); // Log the filtered array
   };
   
 
@@ -52,13 +47,13 @@ const ShowAttendance = () => {
     setSelectedUserId(user._id);
     setSearchTerm(`${user.fname} (${user.email})`);
     setFilteredUsers([]);
-    console.log("Selected User ID: ", user._id);
   };
 
   const handleSearch = () => {
     const idToSearch = selectedUserId || searchTerm.trim();
     if (idToSearch) {
       dispatch(fetchAttendance(idToSearch));
+
       console.log("Searched User ID: ", idToSearch);
     }
   };

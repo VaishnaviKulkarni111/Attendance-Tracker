@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const userRoutes = require("./routes/authRoutes");
 const attendanceRoutes = require("./routes/attendance")
-
+const dashboardRoutes = require("./routes/dashboardRoutes")
 app.use(express.json());
 app.use(cors());
 app.set("view engine", "ejs");
@@ -30,7 +30,7 @@ mongoose
 // Include user routes
 app.use(userRoutes);
 app.use('/attendance', attendanceRoutes);
-
+app.use('/api', dashboardRoutes)
 app.listen(5000, () => {
   console.log("Server Started");
 });

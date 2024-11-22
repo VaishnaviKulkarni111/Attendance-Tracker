@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FaUsers, FaClock, FaCheck, FaChartPie } from 'react-icons/fa';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDashboardData } from '../store/dashboardSlice'
 
 const ManagerDashboard = () => {
-  // Hardcoded data for analytics
-  const totalEmployees = 50;
-  const presentToday = 42;
-  const absentToday = 8;
-  const attendancePercentage = ((presentToday / totalEmployees) * 100).toFixed(1);
+
+  const dispatch = useDispatch();
+    const { activeUsers, present, abscent } = useSelector((state) => state.dashboard);
+useEffect(() => {
+    dispatch(fetchDashboardData());
+  }, [dispatch]);
+  
+ 
+  const attendancePercentage = ((present / activeUsers) * 100).toFixed(1);
 
   return (
     <div className="flex flex-col flex-grow p-6 bg-gray-100 ml-[250px]">
@@ -19,7 +25,7 @@ const ManagerDashboard = () => {
           <FaUsers className="text-blue-500 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-bold text-gray-700">Total Employees</h3>
-            <p className="text-2xl font-bold text-gray-900">{totalEmployees}</p>
+            <p className="text-2xl font-bold text-gray-900">{activeUsers}</p>
           </div>
         </div>
 
@@ -28,7 +34,7 @@ const ManagerDashboard = () => {
           <FaCheck className="text-green-500 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-bold text-gray-700">Present Today</h3>
-            <p className="text-2xl font-bold text-gray-900">{presentToday}</p>
+            <p className="text-2xl font-bold text-gray-900">{present}</p>
           </div>
         </div>
 
@@ -37,7 +43,7 @@ const ManagerDashboard = () => {
           <FaClock className="text-red-500 text-3xl mr-4" />
           <div>
             <h3 className="text-lg font-bold text-gray-700">Absent Today</h3>
-            <p className="text-2xl font-bold text-gray-900">{absentToday}</p>
+            <p className="text-2xl font-bold text-gray-900">{abscent}</p>
           </div>
         </div>
 
