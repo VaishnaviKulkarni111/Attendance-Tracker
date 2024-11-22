@@ -98,5 +98,31 @@ router.get('/manager/:employeeId', async (req, res) => {
 });
 
 
+router.get('/employee/:id', async (req, res) => {
+  // Decode the token to identify the employee
+  const decoded = verifyToken(req);
+  console.log("Decoded token for employee:", decoded);
+
+  if (!decoded || decoded.userType !== 'employee') {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  const employeeId = decoded.id; // Use 'id' instead of '_id'
+  console.log("Employee ID from token:", employeeId);
+
+  try {
+    const attendanceData = await Attendance.find({ employeeId }).sort({ date: -1 });
+    if (!attendanceData || attendanceData.length === 0) {
+      return res.status(404).json({ message: 'No attendance records found' });
+    }
+    res.status(200).json({ attendance: attendanceData });
+  } catch (error) {
+    console.error("Error fetching employee attendance data:", error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+
 
 module.exports = router;

@@ -72,6 +72,34 @@ export const fetchAttendance = createAsyncThunk(
 );
 
 
+export const fetchUserAttendance = createAsyncThunk(
+  'attendance/fetchUserAttendance',
+  async (employeeId, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`http://localhost:5000/attendance/employee/${employeeId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Add token for auth
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return rejectWithValue(error.message || 'Failed to fetch attendance');
+      }
+
+      const data = await response.json();
+      return data.attendance;
+    } catch (error) {
+      console.error('Error fetching attendance:', error);
+      return rejectWithValue(error.message || 'Failed to fetch attendance');
+    }
+  }
+);
+
+
+
 // Attendance slice
 const attendanceSlice = createSlice({
   name: 'attendance',
@@ -112,6 +140,18 @@ const attendanceSlice = createSlice({
       .addCase(fetchAttendance.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchUserAttendance.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserAttendance.fulfilled, (state, action) => {
+        state.loading = false;
+        state.attendance = action.payload; // Populate attendance data
+      })
+      .addCase(fetchUserAttendance.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Something went wrong';
       });
       
   },

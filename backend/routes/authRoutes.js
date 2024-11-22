@@ -2,6 +2,8 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userSchema");
+const Attendance = require('../models/attendanceSchema'); // Ensure attendanceSchema is imported
+
 const router = express.Router();
 
 const JWT_SECRET = "hvdvay6ert72839289()aiyg8t87qt72393293883uhefiuh78ttq3ifi78272jbkj?[]]pou89ywe";
@@ -89,30 +91,9 @@ router.get("/getAllUser", async (req, res) => {
 
 
 // Retrieve user data
-router.post("/userData", async (req, res) => {
-  const { token } = req.body;
-  try {
-    const user = jwt.verify(token, JWT_SECRET, (err, res) => {
-      if (err) {
-        return "token expired";
-      }
-      return res;
-    });
 
-    if (user === "token expired") {
-      return res.send({ status: "error", data: "token expired" });
-    }
 
-    const useremail = user.email;
-    User.findOne({ email: useremail })
-      .then((data) => {
-        res.send({ status: "ok", data: data });
-      })
-      .catch((error) => {
-        res.send({ status: "error", data: error });
-      });
-  } catch (error) {}
-});
+
 
 router.get('/:id', async (req, res) => {
   if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) { // Confirm valid MongoDB ObjectId

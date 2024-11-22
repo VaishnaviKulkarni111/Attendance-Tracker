@@ -13,12 +13,11 @@ const Attendance = () => {
   const handleCheckIn = () => {
     dispatch(checkIn())
       .then((response) => {
-        console.log("response", response)
+        console.log("response", response);
         setSuccessMessage(`Check-in successful at ${response.payload.checkInTime}`);
         setIsSuccessMessageVisible(true);
       })
       .catch((error) => {
-        // Ensure error is a string before setting
         setSuccessMessage(error.message || 'Check-in failed');
         setIsSuccessMessageVisible(true);
       });
@@ -32,7 +31,6 @@ const Attendance = () => {
         setIsSuccessMessageVisible(true);
       })
       .catch((error) => {
-        // Ensure error is a string before setting
         setSuccessMessage(error.message || 'Check-out failed');
         setIsSuccessMessageVisible(true);
       });
@@ -46,13 +44,19 @@ const Attendance = () => {
       </div>
 
       {/* Right Content Area */}
-      <div className="flex-grow p-6">
-        <div className="flex justify-end space-x-4">
+      <div className="flex-grow flex flex-col items-center justify-center p-6">
+        {/* Instructional Text */}
+        <p className="text-xl font-semibold text-gray-700 mb-6">
+          Please mark your attendance
+        </p>
+
+        {/* Buttons Container */}
+        <div className="flex space-x-6">
           {/* Check-in Button */}
           <button
             onClick={handleCheckIn}
             disabled={checkInStatus === 'completed'}
-            className="btn btn-primary"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-lg transition-all duration-150"
           >
             Check-in
           </button>
@@ -61,7 +65,7 @@ const Attendance = () => {
           <button
             onClick={handleCheckOut}
             disabled={checkOutStatus === 'completed' || checkInStatus !== 'completed'}
-            className="btn btn-secondary"
+            className="px-6 py-3 bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded-md shadow-lg transition-all duration-150"
           >
             Check-out
           </button>
